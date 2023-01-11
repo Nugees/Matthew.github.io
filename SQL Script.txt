@@ -1,0 +1,34 @@
+SELECT
+         [ID]
+        ,[Name]
+        ,CASE	WHEN SEX = 'M' THEN 'Male' 
+				ELSE 'Female' 
+		END AS Gender -- Better name for filters and visualisations
+        ,[Age]
+		,CASE	WHEN [Age] < 18 THEN 'Under 18'
+				WHEN [Age] BETWEEN 18 AND 25 THEN '18-25'
+				WHEN [Age] BETWEEN 25 AND 30 THEN '25-30'
+				ELSE 'Over 30'
+		 END AS [Age Grouping]
+        ,[Height]
+        ,[Weight]
+        ,[NOC] AS 'Country Code'
+--		, Games
+ --     ,CHARINDEX(' ', Games)-1 AS 'Example 1' - Defining logic to establish year
+ --     ,CHARINDEX(' ', REVERSE(Games))-1 AS 'Example 2' - Defining logic to establish season
+        ,LEFT(Games, CHARINDEX(' ', Games) - 1) AS 'Year' -- Split column to isolate Year
+        ,RIGHT(Games,CHARINDEX(' ', REVERSE(Games))-1) AS 'Season' -- Split column to isolate Season
+        ,[Sport]
+        ,[Event]
+        ,CASE WHEN Medal = 'NA' THEN 'Did Not Win' ELSE Medal END AS Medal -- Replaced NA with Did Not WIn
+  FROM [olympic_games].[dbo].[athletes_event_results]
+  WHERE RIGHT(Games,CHARINDEX(' ', REVERSE(Games))-1) = 'Summer' -- Clause to isolate Summer Season
+
+
+  ----Script to confirm number of medals won -----
+  SELECT Games, ID, Event, LEFT(Games, CHARINDEX(' ', Games) - 1) AS 'Year', Medal
+  FROM [olympic_games].[dbo].[athletes_event_results]
+  WHERE Games like '%Summer' AND Medal <> 'NA'
+  ORDER BY Year
+
+ 
